@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">R2D2Translator</string>
-    <string name="activation_button">Lancer l'écoute</string>
+    <string name="activation_button">Lancer l\'écoute</string>
     <string name="validation_button">Traduire</string>
 
 </resources>

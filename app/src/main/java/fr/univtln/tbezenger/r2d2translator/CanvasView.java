@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 
 /**
@@ -12,14 +13,11 @@ import android.view.View;
  */
 public class CanvasView extends View{
 
-    // setup initial color
     private final int paintColor = Color.GREEN;
-    // defines paint and canvas
     private Paint drawPaint;
     private Canvas canvas;
     private int height, width;
 
-    // tableau contenant le spectre a dessiner
     private short[] spectre;
 
     private boolean drawing = false;
@@ -31,7 +29,6 @@ public class CanvasView extends View{
         setupPaint();
     }
 
-    // Setup paint with color and stroke styles
     private void setupPaint() {
         drawPaint = new Paint();
         drawPaint.setColor(paintColor);
@@ -51,15 +48,15 @@ public class CanvasView extends View{
         canvas.drawColor(Color.WHITE);
 
         if (spectre != null)
+            Log.d("TAG", "onDraw: "+spectre.length);
             if (drawing)
                 for (int i=0; i<spectre.length; i++) {
-                    canvas.drawLine(width, height, width-1, (float) (spectre[i]*0.01)+height, drawPaint);
+                    canvas.drawLine(width, height, width-1, (float) (spectre[i]*0.02)+height, drawPaint);
                     width--;
                 }
     }
 
     public void setSpectre(short[] spectre) {
-
         drawing = true;
         this.spectre = spectre;
         invalidate();

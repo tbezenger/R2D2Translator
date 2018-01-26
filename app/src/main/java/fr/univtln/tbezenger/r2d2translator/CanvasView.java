@@ -18,9 +18,19 @@ public class CanvasView extends View{
     private Canvas canvas;
     private int height, width;
 
+    private boolean b;
+
     private short[] spectre;
 
     private boolean drawing = false;
+
+    public boolean isB() {
+        return b;
+    }
+
+    public void setB(boolean b) {
+        this.b = b;
+    }
 
     public CanvasView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -47,8 +57,19 @@ public class CanvasView extends View{
 
         canvas.drawColor(Color.WHITE);
 
+        Paint redPaint = new Paint();
+        redPaint.setColor(Color.RED);
+        Paint greenPaint = new Paint();
+        greenPaint.setColor(Color.GREEN);
+
         if (spectre != null)
-            Log.d("TAG", "onDraw: "+spectre.length);
+            if (b) {
+                canvas.drawCircle(40, height, 25, greenPaint);
+            }
+            else {
+                canvas.drawCircle(40, height, 25, redPaint);
+            }
+
             if (drawing)
                 for (int i=0; i<spectre.length; i++) {
                     canvas.drawLine(width, height, width-1, (float) (spectre[i]*0.02)+height, drawPaint);

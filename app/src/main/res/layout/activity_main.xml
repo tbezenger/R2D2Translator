@@ -14,37 +14,13 @@
         android:layout_width="match_parent"
         android:layout_height="128dp" />
 
-    <LinearLayout
-        android:id="@+id/layout1"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/canvas"
-        android:layout_centerHorizontal="true">
-
-
-        <Button
-            android:id="@+id/activationButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/activation_button"
-            android:onClick="ecouter"
-            />
-
-        <Button
-            android:id="@+id/validationButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/validation_button"
-            android:onClick="traduire"/>
-    </LinearLayout>
 
     <TextView
         android:id="@+id/textResult"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:layout_below="@id/layout1"
+        android:layout_marginTop="96dp"
+        android:layout_below="@id/canvas"
         android:layout_centerHorizontal="true"
         android:textSize="64dp"/>
 

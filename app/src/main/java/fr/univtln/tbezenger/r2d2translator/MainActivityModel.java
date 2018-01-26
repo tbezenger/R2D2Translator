@@ -33,7 +33,6 @@ public class MainActivityModel extends Observable{
             String url = Config.URL;
             new Requete().execute(url, "POST", s).get();
             String JSON = new Requete().execute(url,"GET").get();
-            System.out.println(JSON);
             JsonDecoder<String> decoder = new JsonDecoder<>();
             texte_compris = decoder.Decoder(JSON,String.class);
 

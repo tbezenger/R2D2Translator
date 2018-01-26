@@ -5,6 +5,7 @@ import android.content.pm.PackageManager;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
+import android.os.Process;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -31,7 +32,7 @@ public class MainActivity extends AppCompatActivity implements Observer{
     MainActivityModel model;
     CanvasView canvasView;
     int SAMPLE_RATE = 22050;
-    boolean shouldContinue = true;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,15 +76,14 @@ public class MainActivity extends AppCompatActivity implements Observer{
         }
         ///////////////////////////////////////////////////////////
 
-
+        ecouter();
     }
 
-    public void ecouter(View view){
-        shouldContinue = true;
+    public void ecouter(){
         new Thread(new Runnable() {
             @Override
             public void run() {
-                android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_AUDIO);
+                Process.setThreadPriority(Process.THREAD_PRIORITY_AUDIO);
 
                 int bufferSize = AudioRecord.getMinBufferSize(SAMPLE_RATE,
                         AudioFormat.CHANNEL_IN_MONO,
@@ -109,11 +109,55 @@ public class MainActivity extends AppCompatActivity implements Observer{
 
                 Log.v("TAG", "Start recording");
 
-                long shortsRead = 0;
-                while (shouldContinue) {
-                    int numberOfShort = record.read(audioBuffer, 0, audioBuffer.length);
-                    shortsRead += numberOfShort;
 
+                boolean ecoutait = false;
+                final ObjectMapper mapper = new ObjectMapper();
+                while (true) {
+                    record.read(audioBuffer, 0, audioBuffer.length);
+                    int seuil_amplitude = 800;
+                    int sm1=0, max=0;
+                    float tcr = 0;
+                    for (short s : audioBuffer){
+                        if (s*sm1<0) {
+                            tcr += 1;
+                        }
+                        if (s>max){
+                            max = s;
+                        }
+                        sm1=s;
+                    }
+                    tcr /= audioBuffer.length;
+                    if (tcr>0.175 && max > seuil_amplitude) {
+                        ecoutait = true;
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                canvasView.setB(true);
+                            }
+                        });
+                    }
+                    else {
+                        if (ecoutait){
+                            System.out.println(audioBuffer.length);
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    try {
+                                        model.requete(mapper.writeValueAsString(audioBuffer));
+                                    } catch (JsonProcessingException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            });
+                        }
+                        ecoutait = false;
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                canvasView.setB(false);
+                            }
+                        });
+                    }
                     // Do something with the audioBuffer
                     runOnUiThread(new Runnable() {
                         @Override
@@ -122,19 +166,8 @@ public class MainActivity extends AppCompatActivity implements Observer{
                         }
                     });
                 }
-
-                record.stop();
-                record.release();
-
-                // evoyer en rest
-                Log.v("TAG", String.format("Recording stopped. Samples read: %d", shortsRead));
             }
         }).start();
-    }
-
-    public void traduire(View view){
-        shouldContinue = false;
-        textResult.setText("A");
     }
 
 
